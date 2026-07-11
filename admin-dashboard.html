@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสอบออนไลน์ - แผงควบคุม (Dashboard)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #e2e8f0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center">
+
+    <div class="w-full max-w-md bg-[#f8fafc] shadow-2xl min-h-screen relative flex flex-col pb-6">
+        
+        <div class="bg-[#1e293b] text-white px-5 py-4 flex items-center justify-between shadow-md">
+            <h1 class="text-lg font-semibold"><i class="fa-solid fa-chart-pie mr-2"></i> แผงควบคุม</h1>
+            <a href="index.html" class="text-red-400 hover:text-red-300 text-sm transition-colors">
+                ออกจากระบบ <i class="fa-solid fa-power-off ml-1"></i>
+            </a>
+        </div>
+
+        <div class="px-5 py-6 flex-1">
+            
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-slate-800">ภาพรวมการสอบรุ่นที่ 1</h2>
+                <p class="text-sm text-gray-500">อัปเดตล่าสุด: วันนี้ 14:30 น.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+                    <div class="text-blue-500 mb-1"><i class="fa-solid fa-users text-2xl"></i></div>
+                    <div class="text-3xl font-bold text-slate-700">128</div>
+                    <div class="text-xs text-gray-500">ผู้เข้าสอบ (คน)</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+                    <div class="text-purple-500 mb-1"><i class="fa-solid fa-star text-2xl"></i></div>
+                    <div class="text-3xl font-bold text-slate-700">75<span class="text-lg text-gray-400">%</span></div>
+                    <div class="text-xs text-gray-500">คะแนนเฉลี่ย</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center border-b-4 border-b-green-400">
+                    <div class="text-3xl font-bold text-green-500">104</div>
+                    <div class="text-xs text-gray-500">สอบผ่าน (คน)</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center border-b-4 border-b-red-400">
+                    <div class="text-3xl font-bold text-red-500">24</div>
+                    <div class="text-xs text-gray-500">ไม่ผ่าน (คน)</div>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-8">
+                <h3 class="text-sm font-semibold text-slate-700 mb-4">สัดส่วนผู้สอบผ่าน / ไม่ผ่าน</h3>
+                <div class="relative h-48 w-full">
+                    <canvas id="resultChart"></canvas>
+                </div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-slate-700 mb-3">จัดการระบบ</h3>
+            <div class="space-y-3">
+                <a href="admin-exam-manage.html" class="w-full bg-[#1e293b] text-white p-3 rounded-xl flex items-center justify-between shadow-sm hover:bg-slate-700 transition block">
+    <span><i class="fa-solid fa-list-check mr-2"></i> จัดการข้อสอบ</span>
+    <i class="fa-solid fa-chevron-right text-sm"></i>
+</a>
+                 <a href="admin-cert-setup.html" class="w-full bg-[#1e293b] text-white p-3 rounded-xl flex items-center justify-between shadow-sm hover:bg-slate-700 transition block">
+    <span><i class="fa-solid fa-file-contract mr-2"></i> ตั้งค่าแม่แบบเกียรติบัตร</span>
+    <i class="fa-solid fa-chevron-right text-sm"></i>
+</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('resultChart').getContext('2d');
+        const resultChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['สอบผ่าน', 'ไม่ผ่าน'],
+                datasets: [{
+                    data: [104, 24],
+                    backgroundColor: ['#22c55e', '#ef4444'], // สีเขียว และ สีแดง
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'Sarabun' }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

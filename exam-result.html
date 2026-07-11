@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสอบออนไลน์ - ผลการทดสอบ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; background-color: #e2e8f0; }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-center p-4">
+
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center">
+        <div id="resultIcon" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg text-4xl text-white"></div>
+        <h1 class="text-2xl font-bold text-slate-800 mb-2">สรุปผลการทดสอบ</h1>
+        <p id="statusMsg" class="text-lg font-semibold mb-6"></p>
+        
+        <div class="bg-gray-50 p-6 rounded-2xl mb-8">
+            <p class="text-gray-600 mb-2">คะแนนที่คุณทำได้</p>
+            <h2 class="text-5xl font-bold text-slate-800"><span id="scoreText">0</span>/<span id="totalText">0</span></h2>
+            <div class="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
+                <div id="scoreProgressBar" class="h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <a href="index.html" class="block w-full bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-slate-900 transition-all">กลับหน้าหลัก</a>
+    </div>
+
+    <script>
+        // ลิงก์ Google Script ล่าสุด (ตรวจสอบให้แน่ใจว่าลิงก์นี้ถูกต้อง)
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaodSBWDG-HIRbcDMaDMDX6iAQDKVfLuhKGLvP2qriJBwgG1zUm6aDMQKbzU7sjr904w/exec";
+
+        const studentName = localStorage.getItem('studentFullName') || "ไม่ระบุชื่อ";
+        const score = parseInt(localStorage.getItem('finalScore')) || 0;
+        const total = parseInt(localStorage.getItem('totalQuestions')) || 0;
+        const percentage = (score / total) * 100;
+        const isPass = percentage >= 80;
+        const statusText = isPass ? "ผ่าน" : "ไม่ผ่าน";
+
+        document.getElementById('scoreText').innerText = score;
+        document.getElementById('totalText').innerText = total;
+        document.getElementById('scoreProgressBar').style.width = percentage + "%";
+
+        const iconDiv = document.getElementById('resultIcon');
+        const statusMsg = document.getElementById('statusMsg');
+        const progressBar = document.getElementById('scoreProgressBar');
+
+        if (isPass) {
+            iconDiv.classList.add('bg-green-500');
+            iconDiv.innerHTML = '<i class="fa-solid fa-check"></i>';
+            progressBar.classList.add('bg-green-500');
+            statusMsg.innerText = "ยินดีด้วย! คุณผ่านการทดสอบ 🎉";
+            statusMsg.classList.add('text-green-600');
+        } else {
+            iconDiv.classList.add('bg-red-500');
+            iconDiv.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            progressBar.classList.add('bg-red-500');
+            statusMsg.innerText = "เสียใจด้วย คุณยังไม่ผ่านเกณฑ์ 80%";
+            statusMsg.classList.add('text-red-600');
+        }
+
+        // ระบบส่งข้อมูลเข้า Google Sheets แบบ "บังคับส่งทุกครั้ง"
+        const payload = { 
+            name: studentName, 
+            score: score, 
+            total: total, 
+            status: statusText 
+        };
+        
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            console.log("บันทึกข้อมูลสำเร็จ");
+        })
+        .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

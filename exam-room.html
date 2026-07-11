@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสอบออนไลน์ - ทำแบบทดสอบ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #e2e8f0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center">
+
+    <div class="w-full max-w-md bg-[#f4f7fc] shadow-2xl min-h-screen relative flex flex-col pb-24">
+        
+        <div class="bg-[#3b4b72] text-white px-5 py-4 flex items-center justify-between shadow-md sticky top-0 z-20">
+            <div class="flex items-center">
+                <i class="fa-solid fa-file-signature text-xl mr-3"></i>
+                <div>
+                    <h1 class="text-sm font-bold leading-tight truncate w-48">กำลังโหลด...</h1>
+                    <div class="text-[10px] text-blue-200 mt-0.5"><i class="fa-regular fa-clock mr-1"></i> เหลือเวลา</div>
+                </div>
+            </div>
+            <div class="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center shadow-inner">
+                <i class="fa-regular fa-clock mr-2 animate-pulse"></i> 60:00
+            </div>
+        </div>
+
+        <div class="w-full bg-gray-200 h-1.5">
+            <div class="bg-green-500 h-1.5 transition-all duration-300" style="width: 5%"></div>
+        </div>
+
+        <div class="px-5 py-6 flex-1 flex flex-col">
+            <div class="flex justify-between items-end mb-4">
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">ข้อที่ 1 / ?</span>
+            </div>
+
+            <div id="quiz-container" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex-1">
+                </div>
+        </div>
+
+        <div class="fixed bottom-0 w-full max-w-md bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between gap-4">
+            <button id="prevBtn" onclick="changeQuestion(-1)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-xl px-4 py-3.5 transition-all flex justify-center items-center">
+                <i class="fa-solid fa-chevron-left mr-2"></i> ก่อนหน้า
+            </button>
+            <button id="nextBtn" onclick="changeQuestion(1)" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl px-4 py-3.5 shadow-md transition-all flex justify-center items-center">
+                ข้อต่อไป <i class="fa-solid fa-chevron-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. ตั้งค่าข้อสอบของคุณตรงนี้ได้เลย!
+        // ==========================================
+       
+            
+        // พิมพ์ข้อสอบ 20 ข้อของคุณลงในนี้ (เปลี่ยนข้อความในเครื่องหมายคำพูดได้เลย)
+        const examTitle = "แบบทดสอบเรื่อง โรงเรียนส่งเสริมความปลอดภัย (SPS)"; 
+        const examMinutes = 30; 
+        
+        const questionPool = [
+            { 
+                id: 1, 
+                question: "ปรัชญาพื้นฐานของโรงเรียนส่งเสริมความปลอดภัย (SPS) คืออะไร ?", 
+                options: { 
+                    A: "การช่วยเหลือตนเอง การช่วยเหลือซึ่งกันและกัน และการช่วยเหลือจากภาครัฐ", 
+                    B: "การจัดการความเสี่ยง การจัดการภาวะวิกฤติ และการฟื้นฟูหน้าที่ทางสังคม", 
+                    C: "การศึกษาความปลอดภัย การจัดการความปลอดภัย และความร่วมมือด้านความปลอดภัย", 
+                    D: "การป้องกันระดับที่ 1 การป้องกันระดับที่ 2 และการป้องกันระดับที่ 3" 
+                }, 
+                answer: "C" 
+            },
+            { 
+                id: 2, 
+                question: "ข้อใดคือแนวคิดและแนวทางการดำเนินงานเกี่ยวกับโรงเรียนส่งเสริมความปลอดภัย ของ ดร.ฟูจิตะ ?", 
+                options: { 
+                    A: "ทีม (Team) กลยุทธ์ (Strategy) แผน (Plan) ทํา (Do) ตรวจสอบ (Check) ดําเนินการ (Act) แบ่งปัน (Share)", 
+                    B: "กลยุทธ์ (Strategy) แผน (Plan) ทํา (Do) ตรวจสอบ (Check) ดําเนินการ (Act) แบ่งปัน (Share) ทีม (Team)", 
+                    C: "ทีม (Team) แผน (Plan) ทํา (Do) ตรวจสอบ (Check) ดําเนินการ (Act) แบ่งปัน (Share) ปรับปรุง (change)", 
+                    D: "ดําเนินการ (Act) ตรวจสอบ (Check) ทํา (Do) แบ่งปัน (Share) ทีม (Team) กลยุทธ์ (Strategy) แผน (Plan)" 
+                }, 
+                answer: "A" 
+            },
+            { 
+                id: 3, 
+                question: "ขอบข่ายการดำเนินงานของโรงเรียนส่งเสริมความปลอดภัยประกอบด้วยอะไรบ้าง ?", 
+                options: { 
+                    A: "การฝึกฝนให้ความรู้ด้านความปลอดภัย การจัดการความปลอดภัย การประสานงานด้านความปลอดภัย", 
+                    B: "การช่วยเหลือตนเอง การช่วยเหลือซึ่งกันและกัน การช่วยเหลือจากภาครัฐ", 
+                    C: "การป้องกันอาชญากรรม การป้องกันอุบัติเหตุ การป้องกันภัยธรรมชาติ", 
+                    D: "การศึกษาด้านความปลอดภัย การบริหารความปลอดภัย การประเมินความปลอดภัย" 
+                }, 
+                answer: "A" 
+            },
+            { 
+                id: 4, 
+                question: "ข้อใดไม่ใช่ จุดประสงค์ของการดำเนินงานโรงเรียนส่งเสริมความปลอดภัย ?", 
+                options: { 
+                    A: "เพื่อให้ความรู้ การจัดการและประสานงานด้านความปลอดภัย", 
+                    B: "เพื่อสร้างความตระหนักและองค์ความรู้ด้านความปลอดภัย", 
+                    C: "เพื่อรับสถานการณ์และเหตุการณ์ด้านความปลอดภัย", 
+                    D: "เพื่อสร้างเครือข่ายความร่วมมือ ปลูกฝังและปราบปรามด้านความปลอดภัย" 
+                }, 
+                answer: "D" 
+            },
+            { 
+                id: 5, 
+                question: "ข้อใดเป็นบทบาทหน้าที่ของผู้สนับสนุนการดำเนินงานโรงเรียนส่งเสริมความปลอดภัย (SPS OBES TEAMS)?", 
+                options: { 
+                    A: "เข้ารับการพัฒนาเพื่อขึ้นทะเบียน ตามหลักสูตรผู้สนับสนุนการดำเนินงานโรงเรียนส่งเสริมความปลอดภัย", 
+                    B: "นิเทศ ติดตาม สนับสนุนการดำเนินงานโรงเรียนส่งเสริมความปลอดภัย", 
+                    C: "ร่วมเป็นคณะกรรมการประเมิน รับรองผลการดำเนินงานโรงเรียนส่งเสริมความปลอดภัย สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน", 
+                    D: "ถูกทุกข้อ" 
+                }, 
+                answer: "D" 
+            },
+            { 
+                id: 6, 
+                question: "ข้อใด เป็นสิ่งที่สำคัญที่สุด ของการรักษาความปลอดภัยของนักเรียน ?", 
+                options: { 
+                    A: "สายตาที่ใส่ใจและการปฏิบัติอย่างสม่ำเสมอของคณะครูและผู้ปกครอง", 
+                    B: "การมีอุปกรณ์รักษาความปลอดภัยที่ทันสมัย", 
+                    C: "การวางระบบกล้องวงจรปิดที่ครอบคลุม", 
+                    D: "การมีกฎระเบียบที่เข้มงวด" 
+                }, 
+                answer: "A" 
+            },
+            { 
+                id: 7, 
+                question: "ข้อใดคือ หลักการสำคัญของโครงการโรงเรียนส่งเสริมความปลอดภัย ?", 
+                options: { 
+                    A: "การช่วยเหลือตนเอง การช่วยเหลือซึ่งกันและกัน การช่วยเหลือจากภาครัฐ", 
+                    B: "การช่วยเหลือตนเอง การช่วยเหลือซึ่งกันและกัน การช่วยเหลือจากต่างประเทศ", 
+                    C: "การช่วยเหลือตนเอง การช่วยเหลือซึ่งกันและกัน", 
+                    D: "การช่วยเหลือตนเอง การช่วยเหลือซึ่งกันและกัน การช่วยเหลือจากภาครัฐ การช่วยเหลือจากเครือข่าย" 
+                }, 
+                answer: "A" 
+            },
+            { 
+                id: 8, 
+                question: "ข้อใดคือโรงเรียนที่มีสิทธิ์ขอรับการประเมินและรับรองโรงเรียนส่งเสริมความปลอดภัยจากมหาวิทยาลัยโอซาก้า เคียวอิคุ ?", 
+                options: { 
+                    A: "ผ่านการรับรอง ครบ ๓ ปีติดต่อกัน จาก สพฐ.", 
+                    B: "ผ่านการรับรอง ปีที่ ๓ จาก สพฐ.", 
+                    C: "ผ่านการรับรอง ปีที่ ๒ จาก สพฐ.", 
+                    D: "ผ่านการรับรอง ปีที่ ๑ จาก สพฐ." 
+                }, 
+                answer: "A" 
+            },
+            { 
+                id: 9, 
+                question: "เมื่อตรวจพบว่ามีบุคคลแปลกหน้าเข้ามาในโรงเรียนโดยไม่มีการลงทะเบียนหรือขออนุญาต ครูควรดำเนินการอย่างไรเป็นอันดับแรก ?", 
+                options: { 
+                    A: "เข้าไปสอบถามและเชิญออกนอกบริเวณโรงเรียนทันที", 
+                    B: "แจ้งตำรวจโดยตรง", 
+                    C: "แจ้งเจ้าหน้าที่รักษาความปลอดภัยหรือผู้บริหารโรงเรียน", 
+                    D: "ไม่ต้องสนใจหากยังไม่เกิดเหตุร้ายแรง" 
+                }, 
+                answer: "C" 
+            },
+            { 
+                id: 10, 
+                question: "ข้อใด คือแนวทางที่โรงเรียนควรดำเนินการภายหลังเกิดเหตุกับนักเรียน ?", 
+                options: { 
+                    A: "ละเลยเพราะเหตุการณ์ไม่ร้ายแรง", 
+                    B: "จัดกิจกรรมฟื้นฟูจิตใจนักเรียนและแจ้งผู้ปกครองอย่างโปร่งใส", 
+                    C: "ปิดข่าวไม่ให้เผยแพร่", 
+                    D: "ตำหนินักเรียนที่หลงเชื่อคนแปลกหน้า" 
+                }, 
+                answer: "B" 
+            },
+            { 
+                id: 11, 
+                question: "เมื่อเกิดเหตุเด็กนักเรียนลื่นล้มในห้องน้ำ ครูควรดำเนินการอย่างไรเป็นอันดับแรก ?", 
+                options: { 
+                    A: "รีบอุ้มเด็กไปห้องพยาบาลโดยทันที", 
+                    B: "สอบถามอาการเบื้องต้น และประเมินความปลอดภัยก่อนเคลื่อนย้าย", 
+                    C: "ตำหนินักเรียนที่ไม่ระวัง", 
+                    D: "แจ้งผู้ปกครองทันทีโดยไม่ตรวจสอบอาการ" 
+                }, 
+                answer: "B" 
+            },
+            { 
+                id: 12, 
+                question: "ข้อใดต่อไปนี้ เป็นมาตรการเชิงป้องกันที่โรงเรียนควรดำเนินการเพื่อลดอุบัติเหตุในโรงเรียน ?", 
+                options: { 
+                    A: "ให้นักเรียนใส่รองเท้าธรรมดาเล่นกีฬาได้", 
+                    B: "ปล่อยให้นักเรียนเล่นได้ทุกพื้นที่โดยไม่ต้องดูแล", 
+                    C: "จัดให้มีครูเวรดูแลความปลอดภัยและตรวจสอบอุปกรณ์ให้อยู่ในสภาพที่พร้อมใช้งาน", 
+                    D: "ห้ามนักเรียนเล่นกีฬาทุกชนิดในเวลาเรียน" 
+                }, 
+                answer: "C" 
+            },
+            { 
+                id: 13, 
+                question: "หลังจากเกิดเหตุการณ์ละเมิดสิทธิ์ นักเรียนผู้เสียหายควรได้รับการช่วยเหลือด้านใดเป็นลำดับถัดมาเพื่อฟื้นฟูสภาพจิตใจ ?", 
+                options: { 
+                    A: "พบนักกฎหมาย", 
+                    B: "พักการเรียน", 
+                    C: "ย้ายโรงเรียน", 
+                    D: "พบนักจิตวิทยาหรือที่ปรึกษา" 
+                }, 
+                answer: "D" 
+            },
+            { 
+                id: 14, 
+                question: "หากต้องการขอความช่วยเหลือหรือคำแนะนำเพิ่มเติมเกี่ยวกับเด็กและเยาวชน ควรติดต่อหน่วยงานใดและสายด่วนใด ?", 
+                options: { 
+                    A: "ตำรวจ (สายด่วน 191)", 
+                    B: "โรงพยาบาล (สายด่วน 1669)", 
+                    C: "กระทรวงศึกษาธิการ (ไม่มีสายด่วนเฉพาะระบุ)", 
+                    D: "กรมคุ้มครองเด็กและเยาวชน (สายด่วน 1300)" 
+                }, 
+                answer: "D" 
+            },
+            { 
+                id: 15, 
+                question: "จากสถานการณ์ที่นักเรียนถูกกลั่นแกล้งผ่านสื่อออนไลน์ (Cyberbullying) การกระทำใดของโรงเรียนจึงจะเป็นแนวทางเชิงป้องกันที่มีประสิทธิภาพมากที่สุด ?", 
+                options: { 
+                    A: "ลงโทษผู้กระทำผิดเท่านั้น", 
+                    B: "ให้ผู้ปกครองจัดการเรื่องนี้เอง", 
+                    C: "จัดกิจกรรมเสริมสร้างวินัยดิจิทัลและการใช้สื่ออย่างปลอดภัย", 
+                    D: "ปิดการเข้าถึงอินเทอร์เน็ตของนักเรียนทุกคน" 
+                }, 
+                answer: "C" 
+            },
+            { 
+                id: 16, 
+                question: "โรงเรียนควรประเมินและจัดการ “จุดเสี่ยง” ที่อาจก่อให้เกิดภัยต่อนักเรียนอย่างไร จึงจะเป็นไปตามแนวคิดโรงเรียนส่งเสริมความปลอดภัย ?", 
+                options: { 
+                    A: "ตรวจสอบจุดเสี่ยงเมื่อมีเหตุการณ์เท่านั้น", 
+                    B: "จัดให้มีการประเมินและปรับปรุงจุดเสี่ยงอย่างต่อเนื่องโดยมีส่วนร่วมจากนักเรียนและครู", 
+                    C: "ให้ผู้บริหารโรงเรียนประเมินจุดเสี่ยงเพียงลำพัง", 
+                    D: "รอให้มีนโยบายจากต้นสังกัดก่อนจึงค่อยดำเนินการ" 
+                }, 
+                answer: "B" 
+            },
+            { 
+                id: 17, 
+                question: "“การซ้อมแผนเผชิญเหตุ” มีความจำเป็นอย่างไร ?", 
+                options: { 
+                    A: "จำเป็น เพราะเป็นไปตามนโยบายและหลักสูตร", 
+                    B: "จำเป็น เพราะมีประโยชน์ต่อการเตรียมพร้อมรับมือสถานการณ์จริง", 
+                    C: "ไม่จำเป็น เพราะเหตุการณ์ร้ายแรงไม่เคยเกิด", 
+                    D: "ไม่จำเป็น เพราะเสียเวลาในการเรียน" 
+                }, 
+                answer: "B" 
+            },
+            { 
+                id: 18, 
+                question: "คุณครูควรมีท่าทีอย่างไรเมื่อนักเรียนเข้ามาปรึกษาเรื่องการถูกรังแก ?", 
+                options: { 
+                    A: "บอกให้อดทนไว้", 
+                    B: "แนะนำให้นักเรียนจัดการเอง", 
+                    C: "รับฟังอย่างเข้าใจ และดำเนินการตามระบบดูแลช่วยเหลือ", 
+                    D: "ตำหนินักเรียนว่าอ่อนแอเกินไป" 
+                }, 
+                answer: "C" 
+            },
+            { 
+                id: 19, 
+                question: "ข้อใดคือความเข้าใจที่ถูกต้องที่สุดเรื่อง “ความปลอดภัยในโรงเรียน” ?", 
+                options: { 
+                    A: "เป็นแค่เรื่องอุบัติเหตุ", 
+                    B: "ครอบคลุมทั้งร่างกาย จิตใจ และสภาพแวดล้อม", 
+                    C: "เกี่ยวข้องเฉพาะช่างเท่านั้น", 
+                    D: "เป็นเรื่องที่แก้ไขยากไม่ควรใส่ใจมากนัก" 
+                }, 
+                answer: "B" 
+            },
+            { 
+                id: 20, 
+                question: "ความปลอดภัยของนักเรียน เป็นหน้าที่ของใคร ?", 
+                options: { 
+                    A: "เป็นเรื่องของผู้บริหารและเจ้าหน้าที่เท่านั้น", 
+                    B: "เป็นภาระเพิ่มที่ไม่เกี่ยวกับการสอน", 
+                    C: "เป็นหน้าที่ร่วมกันของทุกคนในการดูแลนักเรียน", 
+                    D: "เป็นเรื่องที่ผู้ปกครองควรรับผิดชอบมากกว่าโรงเรียน" 
+                }, 
+                answer: "C" 
+            }
+                    // *** คุณสามารถคัดลอกโครงสร้างด้านบน เพื่อเพิ่มข้อ 4, 5, 6 จนถึงข้อ 20 ต่อลงมาได้เลยครับ ***
+        ];
+
+        // ==========================================
+        // โค้ดการทำงานหลัก (ไม่ต้องแก้ส่วนนี้)
+        // ==========================================
+
+        document.querySelector('h1').innerText = examTitle;
+
+        let userAnswers = {};
+        let currentIndex = 0;
+        let shuffledQuestions = [];
+
+        // ฟังก์ชันสุ่มข้อสอบ
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        shuffledQuestions = shuffle([...questionPool]);
+
+        // ระบบนับเวลาถอยหลัง
+        let timeLeft = examMinutes * 30; 
+        const timerDisplay = document.querySelector('.fa-clock').parentElement;
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 30);
+            const seconds = timeLeft % 30;
+            timerDisplay.innerHTML = `<i class="fa-regular fa-clock mr-2 animate-pulse"></i> ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                alert("หมดเวลาแล้ว!");
+                submitExam(); 
+            }
+        }, 1000);
+
+        // ฟังก์ชันแสดงข้อสอบทีละข้อ
+        function renderQuestion(index) {
+            const q = shuffledQuestions[index];
+            const container = document.getElementById('quiz-container');
+            
+            document.querySelector('.bg-blue-100').innerText = `ข้อที่ ${index + 1} / ${shuffledQuestions.length}`;
+            const progressPercent = ((index + 1) / shuffledQuestions.length) * 100;
+            document.querySelector('.bg-green-500').style.width = progressPercent + '%';
+
+            const previousAnswer = userAnswers[`q${q.id}`] || '';
+
+            container.innerHTML = `
+                <h2 class="text-lg font-semibold mb-6 text-slate-800">${q.question}</h2>
+                ${Object.entries(q.options).map(([key, val]) => `
+                    <label class="block relative cursor-pointer mb-3">
+                        <input type="radio" name="q${q.id}" value="${key}" class="peer sr-only" onchange="saveAnswer('q${q.id}', '${key}')" ${previousAnswer === key ? 'checked' : ''}>
+                        <div class="p-4 rounded-xl border-2 border-gray-100 bg-gray-50 text-gray-700 font-medium transition-all hover:bg-gray-100 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 flex items-start">
+                            <span class="w-8 shrink-0 font-bold">${key === 'A' ? 'ก.' : key === 'B' ? 'ข.' : key === 'C' ? 'ค.' : 'ง.'}</span>
+                            <span>${val}</span>
+                        </div>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-circle-check text-xl"></i>
+                        </div>
+                    </label>
+                `).join('')}
+            `;
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (index === 0) {
+                prevBtn.style.visibility = 'hidden';
+            } else {
+                prevBtn.style.visibility = 'visible';
+            }
+
+            if (index === shuffledQuestions.length - 1) {
+                nextBtn.className = "flex-1 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl px-4 py-3.5 shadow-md transition-all flex justify-center items-center text-center";
+                nextBtn.innerHTML = `ส่งข้อสอบ <i class="fa-solid fa-paper-plane ml-2"></i>`;
+                nextBtn.setAttribute('onclick', 'submitExam()');
+            } else {
+                nextBtn.className = "flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl px-4 py-3.5 shadow-md transition-all flex justify-center items-center";
+                nextBtn.innerHTML = `ข้อต่อไป <i class="fa-solid fa-chevron-right ml-2"></i>`;
+                nextBtn.setAttribute('onclick', 'changeQuestion(1)');
+            }
+        }
+
+        function changeQuestion(direction) {
+            currentIndex += direction;
+            if (currentIndex >= 0 && currentIndex < shuffledQuestions.length) {
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function saveAnswer(qId, value) {
+            userAnswers[qId] = value;
+        }
+
+        function submitExam() {
+            clearInterval(countdown); 
+            
+            let score = 0;
+            // ระบบตรวจคำตอบแบบรัดกุม (ตัดช่องว่างและแปลงเป็นพิมพ์ใหญ่ทั้งหมด)
+            shuffledQuestions.forEach(q => {
+                const userAnswer = (userAnswers[`q${q.id}`] || '').toString().trim().toUpperCase();
+                const correctAnswer = (q.answer || '').toString().trim().toUpperCase();
+                
+                if (userAnswer !== '' && userAnswer === correctAnswer) {
+                    score++;
+                }
+            });
+            
+            // บันทึกคะแนนลงเครื่อง
+            localStorage.setItem('finalScore', score);
+            localStorage.setItem('totalQuestions', shuffledQuestions.length);
+            
+            // ไปหน้าประกาศผล
+            window.location.href = 'exam-result.html'; 
+        }
+        // เริ่มแสดงข้อแรก
+        renderQuestion(0);
+    </script>
+</body>
+</html>

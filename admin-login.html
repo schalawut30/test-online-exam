@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสอบออนไลน์ - เข้าสู่ระบบผู้ดูแล</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #e2e8f0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-center p-4">
+
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+        
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-slate-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <i class="fa-solid fa-user-shield text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800 mb-2">ผู้ดูแลระบบ</h1>
+            <p class="text-gray-500 text-sm">เข้าสู่ระบบเพื่อจัดการแบบทดสอบ</p>
+        </div>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <input type="text" id="adminUsername" placeholder="กรอกชื่อผู้ใช้งาน" class="w-full border border-gray-300 rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-500 bg-gray-50">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน (Password)</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <input type="password" id="adminPassword" placeholder="กรอกรหัสผ่าน" class="w-full border border-gray-300 rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-500 bg-gray-50">
+                </div>
+            </div>
+
+            <button onclick="checkAdminLogin()" class="w-full bg-[#1e293b] hover:bg-slate-700 text-white font-bold rounded-xl px-4 py-4 shadow-md hover:shadow-lg transition-all flex justify-center items-center text-lg mt-4">
+                เข้าสู่ระบบ <i class="fa-solid fa-right-to-bracket ml-2"></i>
+            </button>
+            
+            <a href="index.html" class="block text-center text-sm text-gray-500 hover:text-slate-700 mt-4 transition-colors">
+                <i class="fa-solid fa-arrow-left mr-1"></i> กลับหน้าแรก
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function checkAdminLogin() {
+            // 1. ดึงค่าจากช่องกรอก
+            const user = document.getElementById('adminUsername').value;
+            const pass = document.getElementById('adminPassword').value;
+
+            // 2. ตรวจสอบรหัสผ่าน (แก้รหัสผ่านตรงนี้ได้เลยครับ)
+            if (user === 'admin' && pass === '1234') {
+                // เข้ารหัสสำเร็จ ให้จำสถานะไว้ แล้วเปลี่ยนหน้า
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                // รหัสผิด ให้แจ้งเตือน
+                alert('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้องครับ!');
+            }
+        }
+    </script>
+</body>
+</html>

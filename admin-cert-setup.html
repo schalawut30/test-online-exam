@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสอบออนไลน์ - ตั้งค่าเกียรติบัตร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #e2e8f0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center">
+
+    <div class="w-full max-w-md bg-[#f4f7fc] shadow-2xl min-h-screen relative flex flex-col pb-24">
+        
+        <div class="bg-[#1e293b] text-white px-5 py-4 flex items-center shadow-md sticky top-0 z-10">
+            <a href="admin-dashboard.html" class="text-white hover:text-gray-300 mr-4 transition-colors">
+                <i class="fa-solid fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-lg font-semibold">ตั้งค่าแม่แบบเกียรติบัตร</h1>
+        </div>
+
+        <div class="px-5 py-6">
+            
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h2 class="text-[#1e293b] font-bold text-lg mb-4 border-b pb-2">
+                    <i class="fa-regular fa-image text-orange-500 mr-2"></i> 1. อัปโหลดพื้นหลัง (Template)
+                </h2>
+                
+                <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-orange-300 border-dashed rounded-xl cursor-pointer bg-orange-50 hover:bg-orange-100 transition-all">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-orange-400 mb-2"></i>
+                        <p class="text-sm text-gray-700 font-medium">คลิกเพื่อเลือกไฟล์รูปภาพ</p>
+                        <p class="text-xs text-gray-500 mt-1">รองรับ JPG, PNG ขนาด A4 แนวนอน</p>
+                    </div>
+                    <input type="file" class="hidden" accept="image/png, image/jpeg" />
+                </label>
+
+                <div class="mt-4 relative w-full h-48 bg-gray-200 rounded-lg overflow-hidden border border-gray-300 shadow-inner">
+                    <div class="absolute inset-0 bg-white flex flex-col items-center justify-center text-gray-300">
+                        <i class="fa-solid fa-certificate text-5xl mb-2 opacity-20"></i>
+                        <span class="text-xs uppercase tracking-widest opacity-50">Certificate Preview</span>
+                    </div>
+                    
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-blue-500 bg-blue-500/20 px-4 py-1 rounded text-blue-700 font-bold text-sm cursor-move">
+                        [ชื่อ-นามสกุล]
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h2 class="text-[#1e293b] font-bold text-lg mb-4 border-b pb-2">
+                    <i class="fa-solid fa-arrows-up-down-left-right text-blue-500 mr-2"></i> 2. จัดตำแหน่งพิมพ์ชื่อ
+                </h2>
+                
+                <p class="text-xs text-gray-500 mb-4">ปรับตำแหน่งแกน X (ซ้าย-ขวา) และ Y (บน-ล่าง) เพื่อให้ชื่อผู้สอบผ่านวางตรงกับช่องว่างในเกียรติบัตรของคุณ</p>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium text-gray-700">ตำแหน่งแนวนอน (แกน X)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" value="50" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                            <span class="text-xs text-gray-400">%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium text-gray-700">ตำแหน่งแนวตั้ง (แกน Y)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" value="50" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                            <span class="text-xs text-gray-400">%</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium text-gray-700">ขนาดตัวอักษร</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" value="36" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                            <span class="text-xs text-gray-400">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">เปิดระบบเกียรติบัตรอัตโนมัติ</h3>
+                    <p class="text-xs text-gray-500">ผู้สอบผ่านจะสามารถดาวน์โหลดได้ทันที</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" value="" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                </label>
+            </div>
+
+        </div>
+
+        <div class="fixed bottom-0 w-full max-w-md bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+            <button class="w-full bg-[#1e293b] hover:bg-slate-700 text-white font-bold rounded-xl px-4 py-3.5 shadow-md transition-all flex justify-center items-center text-lg">
+                <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกการตั้งค่า
+            </button>
+        </div>
+
+    </div>
+
+</body>
+</html>

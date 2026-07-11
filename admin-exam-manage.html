@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสอบออนไลน์ - จัดการแบบทดสอบ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #e2e8f0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center">
+
+    <div class="w-full max-w-md bg-[#f4f7fc] shadow-2xl min-h-screen relative flex flex-col pb-20">
+        
+        <div class="bg-[#1e293b] text-white px-5 py-4 flex items-center shadow-md sticky top-0 z-10">
+            <a href="admin-dashboard.html" class="text-white hover:text-gray-300 mr-4 transition-colors">
+                <i class="fa-solid fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-lg font-semibold">จัดการแบบทดสอบ</h1>
+        </div>
+
+        <div class="px-5 py-6">
+            
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h2 class="text-[#1e293b] font-bold text-lg mb-4 border-b pb-2">
+                    <i class="fa-solid fa-sliders text-blue-500 mr-2"></i> 1. ตั้งค่าชุดทดสอบ
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อชุดแบบทดสอบ</label>
+                        <input type="text" id="examTitle" value="ทดสอบหลังการอบรม (Post-test)" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">สุ่มใช้ (ข้อ)</label>
+                            <input type="number" id="examTotalQ" value="20" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">เวลา (นาที)</label>
+                            <input type="number" id="examTime" value="60" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">เกณฑ์ผ่าน (%)</label>
+                            <input type="number" id="examPassScore" value="80" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-[#1e293b] font-bold text-lg">
+                        <i class="fa-solid fa-pen-to-square text-orange-500 mr-2"></i> 2. สร้างคำถาม
+                    </h2>
+                </div>
+
+                <div id="questions-container" class="space-y-6">
+                    </div>
+
+                <button onclick="addQuestionBlock()" class="w-full mt-4 border-2 border-dashed border-gray-300 text-gray-500 bg-transparent hover:bg-gray-50 hover:text-blue-500 hover:border-blue-300 font-bold rounded-xl px-4 py-3 transition-all flex justify-center items-center text-sm">
+                    <i class="fa-solid fa-plus mr-2"></i> เพิ่มคำถามข้อถัดไป
+                </button>
+
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 w-full max-w-md bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+            <button onclick="saveExamData()" class="w-full bg-[#1e293b] hover:bg-slate-700 text-white font-bold rounded-xl px-4 py-3 shadow-md transition-all flex justify-center items-center text-lg">
+                <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกเข้าระบบ
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    // 1. ใส่กุญแจเชื่อมต่อ Supabase
+    const { createClient } = supabase;
+    const supabaseUrl = 'https://nopldguojheprwdhomkb.supabase.co'; // URL ของคุณ
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vcGxkZ3VvamhlcHJ3ZGhvbWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MjA2NTMsImV4cCI6MjA5OTA5NjY1M30.ZWIcpZjyg_v3TvHjE_zycAy86F_FQsxbayB7jKcA0ms'; // <-- เอา anon key ยาวๆ ที่ Copy มาวางทับข้อความนี้ (อย่าลบเครื่องหมาย ' ' นะครับ)
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    let questionCount = 0;
+
+    // ฟังก์ชันโหลดข้อมูลเก่าจาก Supabase มาแสดงตอนเปิดหน้าเว็บ
+    window.onload = async function() {
+        // ดึงข้อมูลจากตาราง exams แถวที่ id = 1
+        const { data, error } = await supabaseClient.from('exams').select('*').eq('id', 1).single();
+
+        if (data) {
+            document.getElementById('examTitle').value = data.title;
+            document.getElementById('examTime').value = data.time_minutes;
+            document.getElementById('examPassScore').value = data.pass_score;
+            document.getElementById('examTotalQ').value = data.total_q;
+
+            const questions = data.question_pool;
+            if (questions && questions.length > 0) {
+                questions.forEach(q => { addQuestionBlock(q); });
+                return;
+            }
+        }
+        // ถ้าไม่มีข้อมูลเลย ให้สร้างกล่องเปล่าข้อ 1
+        addQuestionBlock();
+    };
+
+    // ฟังก์ชันสร้างกล่องคำถาม (ใช้ตัวเดิม)
+    function addQuestionBlock(data = null) {
+        questionCount++;
+        const container = document.getElementById('questions-container');
+        const newBlock = document.createElement('div');
+        newBlock.className = 'question-item bg-gray-50 p-4 rounded-xl border border-gray-200 relative mt-4';
+        
+        const qText = data ? data.question : '';
+        const optA = data ? data.options.A : '';
+        const optB = data ? data.options.B : '';
+        const optC = data ? data.options.C : '';
+        const optD = data ? data.options.D : '';
+        const ans = data ? data.answer : '';
+
+        newBlock.innerHTML = `
+            <span class="absolute -top-3 -left-2 bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm q-number-badge">ข้อที่ ${questionCount}</span>
+            <button onclick="this.parentElement.remove(); reIndexQuestions();" class="absolute -top-3 -right-2 bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center shadow-sm hover:bg-red-500 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xs"></i></button>
+            <div class="space-y-4 mt-2">
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">คำถาม</label><textarea rows="2" class="q-text w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400">${qText}</textarea></div>
+                <div class="space-y-2">
+                    <div class="flex items-center"><span class="w-6 font-bold text-gray-500 text-sm">ก.</span><input type="text" class="opt-a flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm" value="${optA}"></div>
+                    <div class="flex items-center"><span class="w-6 font-bold text-gray-500 text-sm">ข.</span><input type="text" class="opt-b flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm" value="${optB}"></div>
+                    <div class="flex items-center"><span class="w-6 font-bold text-gray-500 text-sm">ค.</span><input type="text" class="opt-c flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm" value="${optC}"></div>
+                    <div class="flex items-center"><span class="w-6 font-bold text-gray-500 text-sm">ง.</span><input type="text" class="opt-d flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm" value="${optD}"></div>
+                </div>
+                <div>
+                    <select class="q-answer w-full border border-green-300 text-green-700 rounded-lg px-3 py-2 text-sm font-medium">
+                        <option value="">-- เลือกเฉลย --</option>
+                        <option value="A" ${ans === 'A' ? 'selected' : ''}>ก.</option>
+                        <option value="B" ${ans === 'B' ? 'selected' : ''}>ข.</option>
+                        <option value="C" ${ans === 'C' ? 'selected' : ''}>ค.</option>
+                        <option value="D" ${ans === 'D' ? 'selected' : ''}>ง.</option>
+                    </select>
+                </div>
+            </div>
+        `;
+        container.appendChild(newBlock);
+        reIndexQuestions();
+    }
+
+    function reIndexQuestions() {
+        const badges = document.querySelectorAll('.q-number-badge');
+        questionCount = badges.length;
+        badges.forEach((badge, index) => { badge.innerText = `ข้อที่ ${index + 1}`; });
+    }
+
+    // 2. ฟังก์ชันกวาดข้อมูลส่งขึ้น Supabase (แก้จาก LocalStorage)
+    async function saveExamData() {
+        const title = document.getElementById('examTitle').value;
+        const time = parseInt(document.getElementById('examTime').value);
+        const passScore = parseInt(document.getElementById('examPassScore').value);
+        const totalQ = parseInt(document.getElementById('examTotalQ').value);
+        let questions = [];
+        let isComplete = true;
+        
+        document.querySelectorAll('.question-item').forEach((block, index) => {
+            const qText = block.querySelector('.q-text').value;
+            const optA = block.querySelector('.opt-a').value;
+            const optB = block.querySelector('.opt-b').value;
+            const optC = block.querySelector('.opt-c').value;
+            const optD = block.querySelector('.opt-d').value;
+            const qAnswer = block.querySelector('.q-answer').value;
+
+            if(!qText || !optA || !optB || !optC || !optD || !qAnswer) {
+                isComplete = false;
+            } else {
+                questions.push({ id: index + 1, question: qText, options: { A: optA, B: optB, C: optC, D: optD }, answer: qAnswer });
+            }
+        });
+
+        if(!isComplete) { alert("กรอกข้อมูลไม่ครบครับ!"); return; }
+
+        // ส่งข้อมูลอัปเดตไปที่ Supabase
+        const { data, error } = await supabaseClient
+            .from('exams')
+            .update({
+                title: title,
+                time_minutes: time,
+                pass_score: passScore,
+                total_q: totalQ,
+                question_pool: questions
+            })
+            .eq('id', 1); // อัปเดตแถวที่ id = 1
+
+        if (error) {
+            alert("เกิดข้อผิดพลาดในการบันทึก: " + error.message);
+        } else {
+            alert(`บันทึกข้อสอบสำเร็จ! ทั้งหมด ${questions.length} ข้อในคลังส่วนกลาง`);
+            window.location.href = 'admin-dashboard.html';
+        }
+    }
+</script>
+</body>
+</html>
