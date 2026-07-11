@@ -60,7 +60,22 @@
                     <i class="fa-regular fa-id-card mr-1"></i> กรุณากรอกชื่อ-นามสกุล
                 </label>
                 <input type="text" id="studentName" placeholder="เช่น ด.ช.สมชาย ใจดี" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white mb-4 transition-all">
-                
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+    <i class="fa-solid fa-school mr-1"></i> โรงเรียน
+</label>
+
+<select id="schoolName"
+    class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+    <option value="">-- เลือกโรงเรียน --</option>
+
+    <option>โรงเรียนสกลนครพัฒนศึกษา</option>
+    <option>โรงเรียนเตรียมอุดมศึกษาภาคตะวันออกเฉียงเหนือ</option>
+    <option>โรงเรียนพังโคนวิทยาคม</option>
+    <option>โรงเรียนอากาศอำนวยศึกษา</option>
+    <option>โรงเรียนสว่างแดนดิน</option>
+
+</select>
                 <button onclick="startExam()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl px-4 py-3.5 shadow-lg transition-transform transform hover:-translate-y-1 flex justify-center items-center">
                     เริ่มทำแบบทดสอบ <i class="fa-solid fa-arrow-right-to-bracket ml-2"></i>
                 </button>
@@ -86,14 +101,16 @@
 
     <script>
         function startExam() {
-            const nameInput = document.getElementById('studentName').value.trim();
-            if (nameInput === "") {
-                alert("กรุณากรอกชื่อ-นามสกุลก่อนเข้าสอบครับ");
-                return;
-            }
-            localStorage.setItem('studentFullName', nameInput);
-            window.location.href = 'exam-room.html';
-        }
+    const nameInput = document.getElementById('studentName').value.trim();
+
+    if (nameInput === "") {
+        alert("กรุณากรอกชื่อ-นามสกุลก่อนเข้าสอบครับ");
+        return;
+    }
+
+    localStorage.setItem('studentFullName', nameInput);
+    window.location.href = 'exam-room.html';
+}
     </script>
 </body>
 </html>

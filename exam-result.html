@@ -33,12 +33,13 @@
         // ลิงก์ Google Script ล่าสุด (ตรวจสอบให้แน่ใจว่าลิงก์นี้ถูกต้อง)
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaodSBWDG-HIRbcDMaDMDX6iAQDKVfLuhKGLvP2qriJBwgG1zUm6aDMQKbzU7sjr904w/exec";
 
-        const studentName = localStorage.getItem('studentFullName') || "ไม่ระบุชื่อ";
-        const score = parseInt(localStorage.getItem('finalScore')) || 0;
-        const total = parseInt(localStorage.getItem('totalQuestions')) || 0;
-        const percentage = (score / total) * 100;
-        const isPass = percentage >= 80;
-        const statusText = isPass ? "ผ่าน" : "ไม่ผ่าน";
+       	const studentName = localStorage.getItem('studentFullName') || "ไม่ระบุชื่อ";
+	const school = localStorage.getItem('schoolName') || "";
+	const score = parseInt(localStorage.getItem('finalScore')) || 0;
+	const total = parseInt(localStorage.getItem('totalQuestions')) || 0;
+	const percentage = (score / total) * 100;
+	const isPass = percentage >= 80;
+	const statusText = isPass ? "ผ่าน" : "ไม่ผ่าน";
 
         document.getElementById('scoreText').innerText = score;
         document.getElementById('totalText').innerText = total;
@@ -64,11 +65,12 @@
 
         // ระบบส่งข้อมูลเข้า Google Sheets แบบ "บังคับส่งทุกครั้ง"
         const payload = { 
-            name: studentName, 
-            score: score, 
-            total: total, 
-            status: statusText 
-        };
+    		name: studentName,
+    		school: school,
+    		score: score,
+    		total: total,
+    		status: statusText
+	};
         
         fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
