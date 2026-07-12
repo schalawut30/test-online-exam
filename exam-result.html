@@ -31,7 +31,7 @@
 
     <script>
         // ลิงก์ Google Script ล่าสุด (ตรวจสอบให้แน่ใจว่าลิงก์นี้ถูกต้อง)
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwi098VzX3N6KPifIivEUKyVzEADnPNMSnOmorAbdWbOdtUNWDfP3ZT5_l2scpc390xMQ/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_UzaYcV3wXFLl3LdHPvRrGg9ZwJRmRw4aMo6zY_oBhYTzrcKfGl8uhLP4ftsGylX5/exec";
 
        	const studentName = localStorage.getItem('studentFullName') || "ไม่ระบุชื่อ";
 	const school = localStorage.getItem('schoolName') || "";
@@ -106,16 +106,21 @@ const payload = {
 };
         
         console.log("Payload =", payload);
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode:'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(() => {
-            console.log("บันทึกข้อมูลสำเร็จ");
-        })
-        .catch(error => console.error('Error:', error));
+
+const formData = new FormData();
+
+formData.append("data", JSON.stringify(payload));
+
+fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    body: formData
+})
+.then(() => {
+    console.log("ส่งข้อมูลไป Google Sheet แล้ว");
+})
+.catch(error => {
+    console.error("Error :", error);
+});
     </script>
 </body>
 </html>
