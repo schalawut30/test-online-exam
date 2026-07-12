@@ -1,11 +1,14 @@
 
-const s=schoolSelect,e=examSelect,info=examInfo;
-schools.forEach(v=>{let o=new Option(v,v);s.add(o);});
-exams.forEach(v=>{let o=new Option(v.title,v.id);e.add(o);});
-e.onchange=()=>{const x=exams.find(a=>a.id===e.value);if(!x){info.classList.add('hidden');return;}
-info.classList.remove('hidden');info.innerHTML=`<b>${x.title}</b><br>${x.description}<br>เวลา ${x.time} นาที | ผ่าน ${x.passScore}%`;};
-startExamBtn.onclick = () => {
+	const s=schoolSelect,e=examSelect,info=examInfo;
+	schools.forEach(v=>{let o=new Option(v,v);s.add(o);});
+	exams.forEach(v=>{let o=new Option(v.title,v.id);e.add(o);});
+	e.onchange=()=>{const x=exams.find(a=>a.id===e.value);if(!x){info.classList.add('hidden');return;}
+	info.classList.remove('hidden');info.innerHTML=`<b>${x.title}</b><br>${x.description}<br>เวลา ${x.time} นาที | ผ่าน ${x.passScore}%`;};
 
+startExamBtn.onclick = () => {
+	console.log("ปุ่มเริ่มสอบถูกกด");
+	console.log("ชื่อ =", fullname.value);
+	console.log("โรงเรียน =", schoolSelect.value);
     // ตรวจสอบข้อมูล
     if (
         !fullname.value.trim() ||
@@ -71,7 +74,8 @@ startExamBtn.onclick = () => {
         "examStartTime",
         Date.now()
     );
-
+	console.log(currentUser);
+	console.log(localStorage.getItem("currentUser"));
     // ไปหน้าข้อสอบ
     window.location.href = "exam-room.html";
 
