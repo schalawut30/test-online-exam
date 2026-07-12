@@ -99,17 +99,40 @@
 </div>
     </div>
 
-    <script>
-        function startExam() {
-    const nameInput = document.getElementById('studentName').value.trim();
+   function startExam() {
 
-    if (nameInput === "") {
-        alert("กรุณากรอกชื่อ-นามสกุลก่อนเข้าสอบครับ");
+    const name = document.getElementById("studentName").value.trim();
+    const school = document.getElementById("schoolName").value;
+
+    if (name === "" || school === "") {
+        alert("กรุณากรอกชื่อและเลือกโรงเรียน");
         return;
     }
 
-    localStorage.setItem('studentFullName', nameInput);
-    window.location.href = 'exam-room.html';
+    const currentUser = {
+
+        userId: "SPS-" + Date.now(),
+
+        fullname: name,
+
+        school: school,
+
+        examName: "โรงเรียนส่งเสริมความปลอดภัย (SPS)",
+
+        examTime: 30,
+
+        passScore: 16,
+
+        startTime: new Date().toLocaleString("th-TH")
+
+    };
+
+    localStorage.setItem(
+        "currentUser",
+        JSON.stringify(currentUser)
+    );
+
+    window.location.href = "exam-room.html";
 }
     </script>
 </body>
