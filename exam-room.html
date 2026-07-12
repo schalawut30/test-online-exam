@@ -54,6 +54,22 @@
         </div>
     </div>
 <script>
+// ==========================================
+// ตรวจสอบการลงทะเบียนผู้เข้าสอบ
+// ==========================================
+const currentUser = JSON.parse(
+    localStorage.getItem("currentUser")
+);
+
+if (!currentUser) {
+
+    alert("กรุณาลงทะเบียนก่อนเข้าสอบ");
+
+    window.location.href = "index.html";
+
+}
+
+
         // ==========================================
         // 1. ตั้งค่าข้อสอบของคุณตรงนี้ได้เลย!
         // ==========================================
@@ -398,9 +414,10 @@
             });
             
             // บันทึกคะแนนลงเครื่อง
-            localStorage.setItem('finalScore', score);
-            localStorage.setItem('totalQuestions', shuffledQuestions.length);
-            
+     localStorage.setItem(
+    "currentUser",
+    JSON.stringify(currentUser)
+);
             // ไปหน้าประกาศผล
             window.location.href = 'exam-result.html'; 
         }
