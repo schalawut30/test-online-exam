@@ -53,8 +53,22 @@
             </button>
         </div>
     </div>
+<script>
 
-    <script>
+// ==========================================
+// ตรวจสอบการลงทะเบียนผู้เข้าสอบ
+// ==========================================
+const currentUser = JSON.parse(
+    localStorage.getItem("currentUser")
+);
+
+if (!currentUser) {
+
+    alert("กรุณาลงทะเบียนก่อนเข้าสอบ");
+
+    window.location.href = "index.html";
+
+}
         // ==========================================
         // 1. ตั้งค่าข้อสอบของคุณตรงนี้ได้เลย!
         // ==========================================
@@ -62,7 +76,7 @@
             
         // พิมพ์ข้อสอบ 20 ข้อของคุณลงในนี้ (เปลี่ยนข้อความในเครื่องหมายคำพูดได้เลย)
         const examTitle = "แบบทดสอบเรื่อง โรงเรียนส่งเสริมความปลอดภัย (SPS)"; 
-        const examMinutes = 30; 
+        const examMinutes = currentUser.examTime;
         
         const questionPool = [
             { 
@@ -310,13 +324,13 @@
         shuffledQuestions = shuffle([...questionPool]);
 
         // ระบบนับเวลาถอยหลัง
-        let timeLeft = examMinutes * 30; 
+        let timeLeft = examMinutes * 60; 
         const timerDisplay = document.querySelector('.fa-clock').parentElement;
 
         const countdown = setInterval(() => {
             timeLeft--;
-            const minutes = Math.floor(timeLeft / 30);
-            const seconds = timeLeft % 30;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
             timerDisplay.innerHTML = `<i class="fa-regular fa-clock mr-2 animate-pulse"></i> ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
             if (timeLeft <= 0) {
