@@ -53,23 +53,8 @@
             </button>
         </div>
     </div>
-<script>
-// ==========================================
-// ตรวจสอบการลงทะเบียนผู้เข้าสอบ
-// ==========================================
-const currentUser = JSON.parse(
-    localStorage.getItem("currentUser")
-);
 
-if (!currentUser) {
-
-    alert("กรุณาลงทะเบียนก่อนเข้าสอบ");
-
-    window.location.href = "index.html";
-
-}
-
-
+    <script>
         // ==========================================
         // 1. ตั้งค่าข้อสอบของคุณตรงนี้ได้เลย!
         // ==========================================
@@ -77,7 +62,7 @@ if (!currentUser) {
             
         // พิมพ์ข้อสอบ 20 ข้อของคุณลงในนี้ (เปลี่ยนข้อความในเครื่องหมายคำพูดได้เลย)
         const examTitle = "แบบทดสอบเรื่อง โรงเรียนส่งเสริมความปลอดภัย (SPS)"; 
-        const examMinutes = currentUser.examTime;
+        const examMinutes = 30; 
         
         const questionPool = [
             { 
@@ -325,13 +310,13 @@ if (!currentUser) {
         shuffledQuestions = shuffle([...questionPool]);
 
         // ระบบนับเวลาถอยหลัง
-        let timeLeft = examMinutes * 60; 
+        let timeLeft = examMinutes * 30; 
         const timerDisplay = document.querySelector('.fa-clock').parentElement;
 
         const countdown = setInterval(() => {
             timeLeft--;
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
+            const minutes = Math.floor(timeLeft / 30);
+            const seconds = timeLeft % 30;
             timerDisplay.innerHTML = `<i class="fa-regular fa-clock mr-2 animate-pulse"></i> ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
             if (timeLeft <= 0) {
@@ -414,10 +399,9 @@ if (!currentUser) {
             });
             
             // บันทึกคะแนนลงเครื่อง
-     localStorage.setItem(
-    "currentUser",
-    JSON.stringify(currentUser)
-);
+            localStorage.setItem('finalScore', score);
+            localStorage.setItem('totalQuestions', shuffledQuestions.length);
+            
             // ไปหน้าประกาศผล
             window.location.href = 'exam-result.html'; 
         }

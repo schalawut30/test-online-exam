@@ -31,18 +31,14 @@
 
     <script>
         // ลิงก์ Google Script ล่าสุด (ตรวจสอบให้แน่ใจว่าลิงก์นี้ถูกต้อง)
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_UzaYcV3wXFLl3LdHPvRrGg9ZwJRmRw4aMo6zY_oBhYTzrcKfGl8uhLP4ftsGylX5/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaodSBWDG-HIRbcDMaDMDX6iAQDKVfLuhKGLvP2qriJBwgG1zUm6aDMQKbzU7sjr904w/exec";
 
-       	const studentName = localStorage.getItem('studentFullName') || "ไม่ระบุชื่อ";
-	const school = localStorage.getItem('schoolName') || "";
-	const score = parseInt(localStorage.getItem('finalScore')) || 0;
-	const total = parseInt(localStorage.getItem('totalQuestions')) || 0;
-	const percentage =
-                 total > 0
-                     ? (score / total) * 100
-                     : 0;
-	const isPass = percentage >= 80;
-	const statusText = isPass ? "ผ่าน" : "ไม่ผ่าน";
+        const studentName = localStorage.getItem('studentFullName') || "ไม่ระบุชื่อ";
+        const score = parseInt(localStorage.getItem('finalScore')) || 0;
+        const total = parseInt(localStorage.getItem('totalQuestions')) || 0;
+        const percentage = (score / total) * 100;
+        const isPass = percentage >= 80;
+        const statusText = isPass ? "ผ่าน" : "ไม่ผ่าน";
 
         document.getElementById('scoreText').innerText = score;
         document.getElementById('totalText').innerText = total;
@@ -67,60 +63,23 @@
         }
 
         // ระบบส่งข้อมูลเข้า Google Sheets แบบ "บังคับส่งทุกครั้ง"
-      const currentUser = JSON.parse(
-    localStorage.getItem("currentUser")
-) || {};
-
-const payload = {
-
-    userId: currentUser.userId || "",
-
-    name: currentUser.fullname || studentName,
-
-    school: currentUser.school || school,
-
-    position: currentUser.position || "",
-
-    examName: currentUser.examName || "",
-
-    score: score,
-
-    total: total,
-
-    percent: percentage,
-
-    status: statusText,
-
-    duration: localStorage.getItem("duration") || "",
-
-    browser: navigator.userAgent,
-
-    device: navigator.platform,
-
-    language: navigator.language,
-
-    screen: screen.width + " x " + screen.height,
-
-    finishTime: new Date().toLocaleString("th-TH")
-
-};
+        const payload = { 
+            name: studentName, 
+            score: score, 
+            total: total, 
+            status: statusText 
+        };
         
-        console.log("Payload =", payload);
-
-const formData = new FormData();
-
-formData.append("data", JSON.stringify(payload));
-
-fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    body: formData
-})
-.then(() => {
-    console.log("ส่งข้อมูลไป Google Sheet แล้ว");
-})
-.catch(error => {
-    console.error("Error :", error);
-});
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            console.log("บันทึกข้อมูลสำเร็จ");
+        })
+        .catch(error => console.error('Error:', error));
     </script>
 </body>
 </html>

@@ -1,0 +1,3 @@
+https://nopldguojheprwdhomkb.supabase.co/rest/v1/  Project URL
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vcGxkZ3VvamhlcHJ3ZGhvbWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MjA2NTMsImV4cCI6MjA5OTA5NjY1M30.ZWIcpZjyg_v3TvHjE_zycAy86F_FQsxbayB7jKcA0ms
